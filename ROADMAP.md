@@ -251,6 +251,7 @@ VeilVault/
 ├── docs/
 │   └── ROADMAP.md        # This file
 ├── docker-compose.yml
+├── www/                #sales portal
 └── README.md
 ```
 
