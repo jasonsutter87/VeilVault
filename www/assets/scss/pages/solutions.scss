@@ -1,0 +1,207 @@
+// ==========================================================================
+// SOLUTIONS PAGE STYLES
+// ==========================================================================
+
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.solutions-hero {
+  padding: 4rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, rgba($primary, 0.05) 0%, rgba($secondary, 0.05) 100%);
+
+  @include lg {
+    padding: 6rem 0;
+  }
+
+  h1 {
+    @include heading(2rem);
+    margin-bottom: 1rem;
+
+    @include lg {
+      font-size: 2.75rem;
+    }
+  }
+
+  p {
+    color: $gray-600;
+    font-size: 1.125rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+.solutions-section {
+  padding: 4rem 0;
+
+  &:nth-child(even) {
+    background: $gray-100;
+  }
+
+  &__title {
+    @include heading(1.5rem);
+    text-align: center;
+    margin-bottom: 3rem;
+
+    @include lg {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+.solutions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+
+  @include md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.solution-card {
+  @include card;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: rgba($primary, 0.1);
+    color: $primary;
+    border-radius: $border-radius;
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    @include heading(1.25rem);
+    margin-bottom: 0.75rem;
+  }
+
+  &__description {
+    color: $gray-600;
+    line-height: 1.6;
+    flex: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  &__link {
+    color: $primary;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &:hover {
+      text-decoration: underline;
+    }
+
+    &::after {
+      content: '→';
+      transition: transform $transition-base;
+    }
+
+    &:hover::after {
+      transform: translateX(4px);
+    }
+  }
+}
+
+// Solution detail page
+.solution-detail {
+  &__hero {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba($primary, 0.1) 0%, rgba($primary, 0.02) 100%);
+
+    @include lg {
+      padding: 6rem 0;
+    }
+  }
+
+  &__header {
+    max-width: 720px;
+
+    h1 {
+      @include heading(2rem);
+      margin-bottom: 1rem;
+
+      @include lg {
+        font-size: 2.5rem;
+      }
+    }
+
+    p {
+      color: $gray-600;
+      font-size: 1.125rem;
+      line-height: 1.7;
+    }
+  }
+
+  &__content {
+    padding: 4rem 0;
+  }
+
+  &__problem,
+  &__solution {
+    margin-bottom: 3rem;
+
+    h2 {
+      @include heading(1.5rem);
+      margin-bottom: 1.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid $gray-200;
+
+        &::before {
+          content: '•';
+          color: $primary;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+
+  &__cta {
+    @include card;
+    padding: 2rem;
+    background: rgba($primary, 0.05);
+    text-align: center;
+
+    h3 {
+      @include heading(1.25rem);
+      margin-bottom: 0.75rem;
+    }
+
+    p {
+      color: $gray-600;
+      margin-bottom: 1.5rem;
+    }
+  }
+}

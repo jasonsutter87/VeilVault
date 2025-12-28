@@ -1,0 +1,79 @@
+{{ define "main" }}
+  {{/* Bootstrap: container | Tailwind: py-8 */}}
+  <div class="container py-8">
+
+    {{/* Section Title */}}
+    <h2 class="text-xl font-bold mb-6 text-gray-700">3 Ways to Make 50% Columns</h2>
+
+    {{/* ROW 1: Pure Bootstrap */}}
+    <div class="row mb-6">
+      <div class="col-12 col-lg-6">
+        <div class="bg-primary text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Bootstrap: col-12 col-lg-6</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">col-12 col-lg-6</code>
+          </p>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="bg-primary text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Bootstrap: col-12 col-lg-6</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">col-12 col-lg-6</code>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {{/* ROW 2: Pure Tailwind */}}
+    <div class="row mb-6">
+      <div class="w-full lg:w-1/2 px-3">
+        <div class="bg-emerald-600 text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Tailwind: w-full lg:w-1/2</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">w-full lg:w-1/2</code>
+          </p>
+        </div>
+      </div>
+      <div class="w-full lg:w-1/2 px-3">
+        <div class="bg-emerald-600 text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Tailwind: w-full lg:w-1/2</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">w-full lg:w-1/2</code>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {{/* ROW 3: Mixed - Bootstrap + Tailwind */}}
+    <div class="row mb-6">
+      <div class="col-12 lg:w-1/2">
+        <div class="bg-purple-600 text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Mixed: col-12 lg:w-1/2</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">col-12 lg:w-1/2</code>
+          </p>
+        </div>
+      </div>
+      <div class="col-12 lg:w-1/2">
+        <div class="bg-purple-600 text-white p-6 rounded-lg h-full">
+          <h3 class="text-lg font-bold mb-2">Mixed: col-12 lg:w-1/2</h3>
+          <p class="mb-0 text-sm">
+            <code class="bg-dark px-2 py-1 rounded">col-12 lg:w-1/2</code>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    {{/* Legend */}}
+    <div class="mt-8 p-4 bg-white rounded-lg shadow">
+      <h4 class="font-bold mb-3">Color Legend:</h4>
+      <ul class="list-unstyled mb-0 d-flex gap-4 flex-wrap">
+        <li><span class="bg-primary text-white px-2 py-1 rounded text-sm">Blue</span> = Bootstrap classes</li>
+        <li><span class="bg-emerald-600 text-white px-2 py-1 rounded text-sm">Green</span> = Tailwind classes</li>
+        <li><span class="bg-purple-600 text-white px-2 py-1 rounded text-sm">Purple</span> = Mixed approach</li>
+      </ul>
+    </div>
+
+  </div>
+{{ end }}

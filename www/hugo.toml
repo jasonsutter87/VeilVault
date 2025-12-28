@@ -1,0 +1,44 @@
+baseURL = 'https://veilvault.io/'
+languageCode = 'en-us'
+title = 'VeilVault - Cryptographic Auditing for Banks'
+
+[params]
+CompanyName = 'VeilVault'
+repoName = 'VeilVault'
+tagline = 'Prove your books are clean. Mathematically.'
+description = 'Cryptographic auditing software for banks and financial institutions. Verify compliance without trust.'
+
+# Contact
+email = 'hello@veilvault.io'
+sales_email = 'sales@veilvault.io'
+
+# Social
+twitter = 'veilvault'
+linkedin = 'veilvault'
+github = 'jasonsutter87/VeilVault'
+
+# CTA
+cta_primary = 'Request Demo'
+cta_primary_url = '/demo/'
+cta_secondary = 'Learn More'
+cta_secondary_url = '/product/'
+
+# Social proof
+customers_count = '50+'
+transactions_verified = '1B+'
+uptime = '99.99%'
+
+[environments.development]
+baseURL = 'http://localhost:1313/'
+
+[environments.production]
+baseURL = 'https://veilvault.io/'
+
+[taxonomies]
+tag = 'tags'
+category = 'categories'
+
+[sitemap]
+changefreq = 'weekly'
+priority = 0.5
+filename = 'sitemap.xml'

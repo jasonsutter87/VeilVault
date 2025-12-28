@@ -1,0 +1,116 @@
+// ==========================================================================
+// PRODUCT PAGE STYLES
+// ==========================================================================
+
+@use '../shared/variables' as *;
+@use '../shared/mixins' as *;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.product-hero {
+  @include flex-column;
+  padding: 4rem 0;
+  background: linear-gradient(135deg, rgba($primary, 0.05) 0%, rgba($secondary, 0.05) 100%);
+
+  @include lg {
+    padding: 6rem 0;
+  }
+}
+
+.features-section {
+  padding: 4rem 0;
+
+  @include lg {
+    padding: 6rem 0;
+  }
+}
+
+.feature-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+  margin-bottom: 4rem;
+
+  @include lg {
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  &--reversed {
+    @include lg {
+      direction: rtl;
+
+      > * {
+        direction: ltr;
+      }
+    }
+  }
+
+  &__content {
+    h3 {
+      @include heading(1.5rem);
+      margin-bottom: 1rem;
+    }
+
+    p {
+      color: $gray-600;
+      line-height: 1.7;
+    }
+  }
+
+  &__image {
+    @include card;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.tech-stack {
+  background: $gray-100;
+  padding: 4rem 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+
+    @include md {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include lg {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  &__item {
+    @include card;
+    @include flex-center;
+    flex-direction: column;
+    padding: 1.5rem;
+    text-align: center;
+
+    &-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+      color: $primary;
+    }
+
+    &-name {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    &-desc {
+      font-size: 0.875rem;
+      color: $gray-600;
+    }
+  }
+}
