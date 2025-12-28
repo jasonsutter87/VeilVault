@@ -14,6 +14,11 @@ import { transactionRoutes } from './routes/transactions.js';
 import { auditRoutes } from './routes/audits.js';
 import { verifyRoutes } from './routes/verify.js';
 import { healthRoutes } from './routes/health.js';
+import { userRoutes } from './routes/users.js';
+import { organizationRoutes } from './routes/organizations.js';
+import { taskRoutes } from './routes/tasks.js';
+import { commentRoutes } from './routes/comments.js';
+import { notificationRoutes } from './routes/notifications.js';
 
 const envToLogger: Record<string, object | boolean> = {
   development: {
@@ -59,6 +64,11 @@ export async function buildServer() {
   await server.register(transactionRoutes, { prefix: '/api/transactions' });
   await server.register(auditRoutes, { prefix: '/api/audits' });
   await server.register(verifyRoutes, { prefix: '/api/verify' });
+  await server.register(userRoutes, { prefix: '/api/users' });
+  await server.register(organizationRoutes, { prefix: '/api/organizations' });
+  await server.register(taskRoutes, { prefix: '/api/tasks' });
+  await server.register(commentRoutes, { prefix: '/api/comments' });
+  await server.register(notificationRoutes, { prefix: '/api/notifications' });
 
   // Error handler
   server.setErrorHandler((error, _request, reply) => {
