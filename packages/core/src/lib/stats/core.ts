@@ -85,11 +85,27 @@ export function standardDeviation(values: number[], sample = false): number {
 export const stdDev = standardDeviation;
 
 /**
+ * Find the minimum value
+ */
+export function min(values: number[]): number {
+  if (values.length === 0) return Infinity;
+  return Math.min(...values);
+}
+
+/**
+ * Find the maximum value
+ */
+export function max(values: number[]): number {
+  if (values.length === 0) return -Infinity;
+  return Math.max(...values);
+}
+
+/**
  * Calculate the range (max - min)
  */
 export function range(values: number[]): number {
   if (values.length === 0) return 0;
-  return Math.max(...values) - Math.min(...values);
+  return max(values) - min(values);
 }
 
 /**
@@ -130,6 +146,11 @@ export function iqr(values: number[]): number {
   const q = quartiles(values);
   return q.q3 - q.q1;
 }
+
+/**
+ * Alias for iqr
+ */
+export const interquartileRange = iqr;
 
 /**
  * Calculate Z-score for a single value
