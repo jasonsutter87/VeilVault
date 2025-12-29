@@ -41,50 +41,55 @@ const createIssueSchema = z.object({
     'management_letter_point',
   ]),
   severity: z.enum(['low', 'medium', 'high', 'critical']),
-  source: z.enum(['internal_audit', 'external_audit', 'self_assessment', 'control_testing', 'incident', 'regulatory', 'management', 'other']),
-  identifiedById: z.string(),
+  source: z.enum(['internal_audit', 'external_audit', 'control_testing', 'management_review', 'regulatory_exam', 'self_identified', 'continuous_monitoring']),
+  identifiedBy: z.string(),
   identifiedByName: z.string(),
   ownerId: z.string(),
   ownerName: z.string(),
-  targetDate: z.string().transform((s) => new Date(s)),
-  relatedControlIds: z.array(z.string()).optional(),
-  relatedRiskIds: z.array(z.string()).optional(),
+  targetDate: z.string().transform((s) => new Date(s)).optional(),
+  controlId: z.string().optional(),
+  riskId: z.string().optional(),
+  controlTestId: z.string().optional(),
+  rootCause: z.string().optional(),
   tags: z.array(z.string()).optional(),
+});
+
+const remediationStepSchema = z.object({
+  order: z.number().int().positive(),
+  description: z.string().min(1),
+  assigneeId: z.string(),
+  assigneeName: z.string(),
+  dueDate: z.string().transform((s) => new Date(s)),
 });
 
 const remediationPlanSchema = z.object({
   description: z.string().min(1),
-  steps: z.array(
-    z.object({
-      order: z.number().int().positive(),
-      description: z.string().min(1),
-      assigneeId: z.string(),
-      assigneeName: z.string(),
-      dueDate: z.string().transform((s) => new Date(s)),
-    })
-  ),
+  steps: z.array(remediationStepSchema),
   estimatedCost: z.number().optional(),
   estimatedEffort: z.string().optional(),
+  userId: z.string(),
+  userName: z.string(),
 });
 
 const updateStepSchema = z.object({
-  completedById: z.string(),
-  completedByName: z.string(),
+  status: z.enum(['pending', 'in_progress', 'completed', 'blocked']).optional(),
   notes: z.string().optional(),
+  userId: z.string(),
+  userName: z.string(),
 });
 
 const deferSchema = z.object({
   userId: z.string(),
   userName: z.string(),
   reason: z.string().min(1),
-  newTargetDate: z.string().transform((s) => new Date(s)),
+  deferUntil: z.string().transform((s) => new Date(s)),
 });
 
 const extendSchema = z.object({
   userId: z.string(),
   userName: z.string(),
   reason: z.string().min(1),
-  newDate: z.string().transform((s) => new Date(s)),
+  newTargetDate: z.string().transform((s) => new Date(s)),
 });
 
 const escalateSchema = z.object({
@@ -171,25 +176,29 @@ export async function issueRoutes(fastify: FastifyInstance) {
   });
 
   // Open issue (move from draft to open)
-  fastify.post<{ Params: { id: string } }>('/:id/open', async (request, reply) => {
-    const { id } = request.params;
+  fastify.post<{ Params: { id: string }; Body: { userId: string; userName: string } }>(
+    '/:id/open',
+    async (request, reply) => {
+      const { id } = request.params;
+      const { userId, userName } = request.body as { userId: string; userName: string };
 
-    const issue = issues.get(id);
-    if (!issue) {
-      return reply.status(404).send({
-        error: true,
-        message: 'Issue not found',
-      });
+      const issue = issues.get(id);
+      if (!issue) {
+        return reply.status(404).send({
+          error: true,
+          message: 'Issue not found',
+        });
+      }
+
+      const opened = openIssue(issue, userId, userName);
+      issues.set(id, opened);
+
+      return {
+        success: true,
+        data: opened,
+      };
     }
-
-    const opened = openIssue(issue);
-    issues.set(id, opened);
-
-    return {
-      success: true,
-      data: opened,
-    };
-  });
+  );
 
   // Create remediation plan
   fastify.post<{ Params: { id: string } }>(
@@ -206,7 +215,21 @@ export async function issueRoutes(fastify: FastifyInstance) {
         });
       }
 
-      const updated = createRemediationPlan(issue, body);
+      const { userId, userName, steps, ...planData } = body;
+
+      // Add required id and status to each step
+      const stepsWithIds = steps.map((step) => ({
+        ...step,
+        id: crypto.randomUUID(),
+        status: 'pending' as const,
+      }));
+
+      const updated = createRemediationPlan(
+        issue,
+        { ...planData, steps: stepsWithIds },
+        userId,
+        userName
+      );
       issues.set(id, updated);
 
       return {
@@ -231,7 +254,8 @@ export async function issueRoutes(fastify: FastifyInstance) {
         });
       }
 
-      const updated = updateRemediationStep(issue, stepId, body);
+      const { userId, userName, ...updates } = body;
+      const updated = updateRemediationStep(issue, stepId, updates, userId, userName);
       issues.set(id, updated);
 
       return {
@@ -242,14 +266,11 @@ export async function issueRoutes(fastify: FastifyInstance) {
   );
 
   // Request validation
-  fastify.post<{ Params: { id: string }; Body: { requestedById: string; requestedByName: string } }>(
+  fastify.post<{ Params: { id: string }; Body: { userId: string; userName: string } }>(
     '/:id/request-validation',
     async (request, reply) => {
       const { id } = request.params;
-      const { requestedById, requestedByName } = request.body as {
-        requestedById: string;
-        requestedByName: string;
-      };
+      const { userId, userName } = request.body as { userId: string; userName: string };
 
       const issue = issues.get(id);
       if (!issue) {
@@ -259,7 +280,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
         });
       }
 
-      const updated = requestValidation(issue, requestedById, requestedByName);
+      const updated = requestValidation(issue, userId, userName);
       issues.set(id, updated);
 
       return {
@@ -301,14 +322,10 @@ export async function issueRoutes(fastify: FastifyInstance) {
   // Close issue
   fastify.post<{
     Params: { id: string };
-    Body: { closedById: string; closedByName: string; closureNotes?: string };
+    Body: { userId: string; userName: string };
   }>('/:id/close', async (request, reply) => {
     const { id } = request.params;
-    const { closedById, closedByName, closureNotes } = request.body as {
-      closedById: string;
-      closedByName: string;
-      closureNotes?: string;
-    };
+    const { userId, userName } = request.body as { userId: string; userName: string };
 
     const issue = issues.get(id);
     if (!issue) {
@@ -318,7 +335,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
       });
     }
 
-    const updated = closeIssue(issue, closedById, closedByName, closureNotes);
+    const updated = closeIssue(issue, userId, userName);
     issues.set(id, updated);
 
     return {
@@ -340,7 +357,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
       });
     }
 
-    const updated = deferIssue(issue, body.userId, body.userName, body.reason, body.newTargetDate);
+    const updated = deferIssue(issue, body.deferUntil, body.reason, body.userId, body.userName);
     issues.set(id, updated);
 
     return {
@@ -391,7 +408,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
       });
     }
 
-    const updated = extendTargetDate(issue, body.newDate, body.userId, body.userName, body.reason);
+    const updated = extendTargetDate(issue, body.newTargetDate, body.reason, body.userId, body.userName);
     issues.set(id, updated);
 
     return {
@@ -435,7 +452,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
       });
     }
 
-    const updated = addIssueComment(issue, body);
+    const updated = addIssueComment(issue, body.content, body.authorId, body.authorName, body.isInternal ?? false);
     issues.set(id, updated);
 
     return {
@@ -473,6 +490,7 @@ export async function issueRoutes(fastify: FastifyInstance) {
 
     const overdue = issueList.filter(
       (i) =>
+        i.targetDate &&
         i.targetDate < now &&
         !['closed', 'validated', 'accepted', 'deferred'].includes(i.status)
     );
@@ -490,8 +508,8 @@ export async function issueRoutes(fastify: FastifyInstance) {
     async (request) => {
       const { controlId } = request.params;
 
-      const related = Array.from(issues.values()).filter((i) =>
-        i.relatedControlIds.includes(controlId)
+      const related = Array.from(issues.values()).filter(
+        (i) => i.controlId === controlId
       );
 
       return {
@@ -506,8 +524,8 @@ export async function issueRoutes(fastify: FastifyInstance) {
   fastify.get<{ Params: { riskId: string } }>('/by-risk/:riskId', async (request) => {
     const { riskId } = request.params;
 
-    const related = Array.from(issues.values()).filter((i) =>
-      i.relatedRiskIds.includes(riskId)
+    const related = Array.from(issues.values()).filter(
+      (i) => i.riskId === riskId
     );
 
     return {

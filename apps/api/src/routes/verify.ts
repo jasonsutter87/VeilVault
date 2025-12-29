@@ -9,18 +9,13 @@ import { createVaultLedger, type VaultLedgerConfig } from '@veilvault/sdk';
 
 // Validation schemas
 const verifyProofSchema = z.object({
-  ledgerId: z.string().uuid(),
-  entryId: z.string(),
-  entryHash: z.string(),
-  proof: z.string(), // Serialized proof
+  proof: z.string(), // Serialized proof JSON
 });
 
 const verifyBatchSchema = z.object({
-  ledgerId: z.string().uuid(),
   proofs: z.array(
     z.object({
       entryId: z.string(),
-      entryHash: z.string(),
       proof: z.string(),
     })
   ),
@@ -44,19 +39,18 @@ export async function verifyRoutes(fastify: FastifyInstance) {
 
     try {
       // Deserialize the proof
-      const proof = ledgerClient.deserializeProof(body.proof, body.ledgerId);
+      const proof = ledgerClient.deserializeProof(body.proof);
 
-      // Verify locally
-      const result = ledgerClient.verifyProofLocally(body.entryHash, proof);
+      // Verify locally - returns boolean
+      const isValid = await ledgerClient.verifyProofLocally(proof);
 
       return {
         success: true,
         data: {
-          valid: result.valid,
-          ledgerId: result.ledgerId,
-          entryId: result.entryId,
-          verifiedAt: result.verifiedAt,
-          details: result.details,
+          valid: isValid,
+          verifiedAt: new Date().toISOString(),
+          proofRoot: proof.root,
+          proofIndex: proof.index,
         },
       };
     } catch (error) {
@@ -87,12 +81,12 @@ export async function verifyRoutes(fastify: FastifyInstance) {
 
     for (const item of body.proofs) {
       try {
-        const proof = ledgerClient.deserializeProof(item.proof, body.ledgerId);
-        const result = ledgerClient.verifyProofLocally(item.entryHash, proof);
+        const proof = ledgerClient.deserializeProof(item.proof);
+        const isValid = await ledgerClient.verifyProofLocally(proof);
 
         results.push({
           entryId: item.entryId,
-          valid: result.valid,
+          valid: isValid,
         });
       } catch (error) {
         results.push({
@@ -125,7 +119,7 @@ export async function verifyRoutes(fastify: FastifyInstance) {
 
       try {
         // Get fresh proof from ledger
-        const proof = await ledgerClient.getProof(ledgerId, entryId);
+        const result = await ledgerClient.getProofByEntryId(ledgerId, entryId);
 
         // Get current integrity status
         const status = await ledgerClient.getIntegrityStatus(ledgerId);
@@ -137,8 +131,8 @@ export async function verifyRoutes(fastify: FastifyInstance) {
             ledgerId,
             entryId,
             currentRootHash: status.rootHash,
-            proofRootHash: proof.rootHash,
-            rootsMatch: status.rootHash === proof.rootHash,
+            proofRootHash: result.rootHash,
+            rootsMatch: status.rootHash === result.rootHash,
             verifiedAt: new Date().toISOString(),
           },
         };
@@ -165,10 +159,7 @@ export async function verifyRoutes(fastify: FastifyInstance) {
             name: 'API Verification',
             description: 'POST your proof to /api/verify',
             format: {
-              ledgerId: 'UUID of the ledger',
-              entryId: 'ID of the entry',
-              entryHash: 'SHA-256 hash of the entry data',
-              proof: 'Base64-encoded proof from export',
+              proof: 'JSON-serialized Merkle proof',
             },
           },
           {
@@ -178,10 +169,11 @@ export async function verifyRoutes(fastify: FastifyInstance) {
 import { verifyProofOffline } from '@veilchain/core';
 
 const isValid = verifyProofOffline({
-  entryHash: 'your-entry-hash',
-  proof: decodedProof.proof,
-  index: decodedProof.index,
-  rootHash: decodedProof.rootHash,
+  leaf: 'entry-hash',
+  proof: ['sibling-hash-1', 'sibling-hash-2'],
+  directions: ['left', 'right'],
+  index: 0,
+  root: 'root-hash',
 });
             `.trim(),
           },

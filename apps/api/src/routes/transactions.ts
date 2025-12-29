@@ -5,7 +5,20 @@
 
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
-import { createVaultLedger, type VaultLedgerConfig, type TransactionData } from '@veilvault/sdk';
+import { createVaultLedger, type VaultLedgerConfig } from '@veilvault/sdk';
+
+// Transaction data structure
+interface TransactionData {
+  id: string;
+  timestamp: string;
+  type: string;
+  amount: number;
+  currency: string;
+  accountId: string;
+  counterpartyId?: string;
+  reference?: string;
+  metadata?: Record<string, unknown>;
+}
 
 // Validation schemas
 const createTransactionSchema = z.object({
@@ -17,11 +30,6 @@ const createTransactionSchema = z.object({
   counterpartyId: z.string().optional(),
   reference: z.string().optional(),
   metadata: z.record(z.unknown()).optional(),
-});
-
-const getProofSchema = z.object({
-  ledgerId: z.string().uuid(),
-  entryId: z.string(),
 });
 
 // Initialize VaultLedger
@@ -81,11 +89,11 @@ export async function transactionRoutes(fastify: FastifyInstance) {
       const { ledgerId, entryId } = request.params;
 
       try {
-        const proof = await ledgerClient.getProof(ledgerId, entryId);
+        const result = await ledgerClient.getProofByEntryId(ledgerId, entryId);
 
         return {
           success: true,
-          data: proof,
+          data: result,
         };
       } catch (error) {
         fastify.log.error(error);
@@ -104,14 +112,14 @@ export async function transactionRoutes(fastify: FastifyInstance) {
       const { ledgerId, entryId } = request.params;
 
       try {
-        const proof = await ledgerClient.getProof(ledgerId, entryId);
-        const serialized = ledgerClient.serializeProof(proof);
+        const result = await ledgerClient.getProofByEntryId(ledgerId, entryId);
+        const serialized = ledgerClient.serializeProofToString(result.proof);
 
         return {
           success: true,
           data: {
             proof: serialized,
-            format: 'base64',
+            format: 'json',
             instructions: 'Use VeilVault SDK or VeilChain to verify this proof',
           },
         };

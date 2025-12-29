@@ -19,6 +19,12 @@ export type RealtimeEventType =
   | 'user:left'
   | 'user:typing'
   | 'user:viewing'
+  // Presence
+  | 'user:online'
+  | 'user:away'
+  | 'user:busy'
+  | 'users:online'
+  | 'viewers:list'
   // Comments
   | 'comment:added'
   | 'comment:updated'

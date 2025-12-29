@@ -35,7 +35,9 @@ export async function ledgerRoutes(fastify: FastifyInstance) {
     const body = createLedgerSchema.parse(request.body);
 
     try {
-      const ledger = await ledgerClient.createLedger(body.name, body.description);
+      const ledger = await ledgerClient.createLedger(body.name, {
+        description: body.description,
+      });
 
       return reply.status(201).send({
         success: true,
@@ -130,6 +132,8 @@ export async function ledgerRoutes(fastify: FastifyInstance) {
   );
 
   // Get transactions in a ledger
+  // Note: Transaction listing requires querying VeilChain API directly
+  // The SDK provides ledger-level operations; entries are accessed via getProofByEntryId
   fastify.get<{ Params: { id: string }; Querystring: { limit?: string; offset?: string } }>(
     '/:id/transactions',
     async (request, reply) => {
@@ -138,17 +142,30 @@ export async function ledgerRoutes(fastify: FastifyInstance) {
       const offset = parseInt(request.query.offset ?? '0', 10);
 
       try {
-        const transactions = await ledgerClient.listTransactions(id, {
-          limit,
-          offset,
-        });
+        // Get ledger integrity status which includes entry count
+        const status = await ledgerClient.getIntegrityStatus(id);
 
+        if (status.status === 'error') {
+          return reply.status(404).send({
+            error: true,
+            message: 'Ledger not found',
+          });
+        }
+
+        // In production, this would query VeilChain API for entries
+        // For now, return metadata about the ledger
         return {
           success: true,
-          data: transactions,
+          data: {
+            ledgerId: id,
+            entryCount: status.entryCount,
+            rootHash: status.rootHash,
+            message: 'Use VeilChain API directly to list entries',
+          },
           pagination: {
             limit,
             offset,
+            total: status.entryCount,
           },
         };
       } catch (error) {

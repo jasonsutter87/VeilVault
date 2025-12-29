@@ -4,7 +4,6 @@
 // ==========================================================================
 
 import { VaultLedger } from '@veilvault/sdk';
-import type { Transaction } from '../entities/transaction.js';
 import type { AuditPackage, CreateAuditPackageInput } from '../entities/audit-package.js';
 import {
   createAuditPackage,
@@ -26,36 +25,23 @@ export class AuditService {
 
   /**
    * Generate an audit package for a date range
+   * In a full implementation, this would query the ledger for entries in the date range
    */
   async generateAuditPackage(
     input: CreateAuditPackageInput
   ): Promise<AuditPackage> {
-    // Fetch transactions for the date range
-    const transactions = await this.vaultLedger.listTransactions(input.ledgerId);
+    // Get current ledger state
+    const integrityStatus = await this.vaultLedger.getIntegrityStatus(input.ledgerId);
 
-    // Filter by date range
-    const filteredTx = transactions.filter((tx) => {
-      const txDate = new Date(tx.timestamp);
-      return txDate >= input.startDate && txDate <= input.endDate;
-    });
-
-    // Get proofs for all transactions
-    const proofs: string[] = [];
-    for (const tx of filteredTx) {
-      try {
-        const proof = await this.vaultLedger.getProof(input.ledgerId, tx.id);
-        proofs.push(this.vaultLedger.serializeProof(proof));
-      } catch {
-        // Transaction might not have a proof yet
-      }
+    if (integrityStatus.status === 'error') {
+      throw new Error(integrityStatus.message || 'Ledger not found');
     }
 
-    // Get current ledger state
-    const ledgers = await this.vaultLedger.listLedgers();
-    const ledger = ledgers.find((l) => l.id === input.ledgerId);
-    const rootHash = ledger?.rootHash ?? '';
+    const rootHash = integrityStatus.rootHash;
+    const entryCount = integrityStatus.entryCount;
 
     // Create proof bundle
+    // In production, this would include proofs for all entries in the date range
     const proofBundle = JSON.stringify({
       version: '1.0',
       ledgerId: input.ledgerId,
@@ -63,15 +49,15 @@ export class AuditService {
         start: input.startDate.toISOString(),
         end: input.endDate.toISOString(),
       },
-      transactionCount: filteredTx.length,
+      entryCount,
       rootHash,
-      proofs,
+      proofs: [], // Would contain serialized proofs in production
     });
 
     // Create the audit package
     const auditPackage = createAuditPackage(
       input,
-      filteredTx.length,
+      entryCount,
       rootHash,
       proofBundle
     );
@@ -123,15 +109,14 @@ export class AuditService {
       return { valid: false, message: 'Package has expired' };
     }
 
-    // Parse and verify each proof in the bundle
+    // Parse and verify the proof bundle
     try {
       const bundle = JSON.parse(pkg.proofBundle);
 
-      // Verify root hash matches current ledger
-      const ledgers = await this.vaultLedger.listLedgers();
-      const ledger = ledgers.find((l) => l.id === pkg.ledgerId);
+      // Get current ledger status
+      const status = await this.vaultLedger.getIntegrityStatus(pkg.ledgerId);
 
-      if (!ledger) {
+      if (status.status === 'error') {
         return { valid: false, message: 'Ledger not found' };
       }
 
@@ -143,7 +128,7 @@ export class AuditService {
 
       return {
         valid: true,
-        message: `Verified ${bundle.transactionCount} transactions`,
+        message: `Verified package with ${bundle.entryCount} entries`,
       };
     } catch (error) {
       return {

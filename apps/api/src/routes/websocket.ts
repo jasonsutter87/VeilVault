@@ -269,11 +269,11 @@ export async function websocketRoutes(fastify: FastifyInstance) {
     sendToSocket(socket, createMessage('users:online', { users: onlineUsers }));
 
     // Handle incoming messages
-    socket.on('message', (raw) => {
+    socket.on('message', (raw: Buffer | string) => {
       try {
         const message = JSON.parse(raw.toString()) as ClientMessage;
         handleClientMessage(socket, message);
-      } catch (err) {
+      } catch (err: unknown) {
         console.error('Failed to parse WebSocket message:', err);
       }
     });
@@ -297,7 +297,7 @@ export async function websocketRoutes(fastify: FastifyInstance) {
       }
     });
 
-    socket.on('error', (err) => {
+    socket.on('error', (err: Error) => {
       console.error('WebSocket error:', err);
     });
   });

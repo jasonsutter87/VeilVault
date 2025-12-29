@@ -75,7 +75,7 @@ export interface DataSource {
 export interface ReportFilter {
   field: string;
   operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than' | 'in' | 'between' | 'is_null' | 'is_not_null';
-  value: unknown;
+  value?: unknown;
   isParameter?: boolean; // Allow user input at runtime
   parameterName?: string;
 }

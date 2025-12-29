@@ -68,7 +68,7 @@ export interface AlertRule {
 export interface AlertCondition {
   field: string;
   operator: 'equals' | 'not_equals' | 'greater_than' | 'less_than' | 'contains' | 'in' | 'not_in';
-  value: unknown;
+  value?: unknown;
 }
 
 export interface AlertAction {
