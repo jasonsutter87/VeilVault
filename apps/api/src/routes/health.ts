@@ -9,10 +9,13 @@ export async function healthRoutes(fastify: FastifyInstance) {
   // Basic health check
   fastify.get('/health', async () => {
     return {
-      status: 'healthy',
-      timestamp: new Date().toISOString(),
-      version: '0.1.0',
-      service: 'veilvault-api',
+      success: true,
+      data: {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        version: '0.1.0',
+        service: 'veilvault-api',
+      },
     };
   });
 

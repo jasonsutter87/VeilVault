@@ -3,6 +3,8 @@
 // In-app notifications and activity feed
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type NotificationType =
   | 'task_assigned'
   | 'task_completed'
@@ -53,7 +55,7 @@ export interface CreateNotificationInput {
 
 export function createNotification(input: CreateNotificationInput): Notification {
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     organizationId: input.organizationId,
     userId: input.userId,
     type: input.type,
@@ -178,7 +180,7 @@ export interface CreateActivityInput {
 
 export function createActivity(input: CreateActivityInput): Activity {
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     organizationId: input.organizationId,
     actorId: input.actorId,
     actorName: input.actorName,
@@ -229,7 +231,7 @@ export function groupActivitiesByDate(activities: Activity[]): Map<string, Activ
   const groups = new Map<string, Activity[]>();
 
   for (const activity of activities) {
-    const dateKey = activity.createdAt.toISOString().split('T')[0];
+    const dateKey = activity.createdAt.toISOString().split('T')[0] ?? '';
     const existing = groups.get(dateKey) ?? [];
     groups.set(dateKey, [...existing, activity]);
   }

@@ -17,14 +17,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "dependencies": {
-    "@veilchain/core": "file:../../../VeilChain",
-    "@veilproof/core": "file:../../../VeilProof",
-    "@veilkey/core": "file:../../../VeilKey",
-    "@veilsign/core": "file:../../../VeilSign",
-    "@veilcloud/core": "file:../../../VeilCloud"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^20.10.6",
     "typescript": "^5.7.2"
   }
 }

@@ -3,6 +3,7 @@
 // Regulatory and compliance report generation
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
 import type { Ledger, LedgerSummary } from '../entities/ledger.js';
 import type { AuditPackage } from '../entities/audit-package.js';
 import type { VerificationSummary } from '../entities/verification.js';
@@ -64,7 +65,7 @@ export class ReportService {
     });
 
     return {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       type: 'integrity',
       format: config.format,
       filename: this.generateFilename('integrity', config),
@@ -92,7 +93,7 @@ export class ReportService {
     });
 
     return {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       type: 'activity',
       format: config.format,
       filename: this.generateFilename('activity', config),
@@ -134,7 +135,7 @@ export class ReportService {
     const content = this.formatReport(config.format, data);
 
     return {
-      id: crypto.randomUUID(),
+      id: randomUUID(),
       type: 'audit',
       format: config.format,
       filename: this.generateFilename('audit-summary', config),

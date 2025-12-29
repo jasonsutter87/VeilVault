@@ -19,6 +19,13 @@ import { organizationRoutes } from './routes/organizations.js';
 import { taskRoutes } from './routes/tasks.js';
 import { commentRoutes } from './routes/comments.js';
 import { notificationRoutes } from './routes/notifications.js';
+import { riskRoutes } from './routes/risks.js';
+import { controlRoutes } from './routes/controls.js';
+import { issueRoutes } from './routes/issues.js';
+import { rcmRoutes } from './routes/rcm.js';
+import { alertRoutes } from './routes/alerts.js';
+import { soxRoutes } from './routes/sox.js';
+import { reportRoutes } from './routes/reports.js';
 
 const envToLogger: Record<string, object | boolean> = {
   development: {
@@ -69,6 +76,13 @@ export async function buildServer() {
   await server.register(taskRoutes, { prefix: '/api/tasks' });
   await server.register(commentRoutes, { prefix: '/api/comments' });
   await server.register(notificationRoutes, { prefix: '/api/notifications' });
+  await server.register(riskRoutes, { prefix: '/api/risks' });
+  await server.register(controlRoutes, { prefix: '/api/controls' });
+  await server.register(issueRoutes, { prefix: '/api/issues' });
+  await server.register(rcmRoutes, { prefix: '/api/rcm' });
+  await server.register(alertRoutes, { prefix: '/api/alerts' });
+  await server.register(soxRoutes, { prefix: '/api/sox' });
+  await server.register(reportRoutes, { prefix: '/api/reports' });
 
   // Error handler
   server.setErrorHandler((error, _request, reply) => {

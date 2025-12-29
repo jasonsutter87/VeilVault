@@ -3,6 +3,8 @@
 // Multi-tenant organization/company model
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type OrganizationType = 'credit_union' | 'regional_bank' | 'enterprise_bank' | 'regulator' | 'auditor_firm';
 export type OrganizationStatus = 'active' | 'trial' | 'suspended' | 'cancelled';
 export type SubscriptionTier = 'starter' | 'professional' | 'enterprise' | 'regulator';
@@ -105,7 +107,7 @@ export function createOrganization(input: CreateOrganizationInput): Organization
   const limits = TIER_LIMITS[tier];
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     name: input.name,
     slug: slugify(input.name),
     type: input.type,

@@ -3,6 +3,8 @@
 // User model with role-based access control
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type UserRole = 'admin' | 'auditor' | 'viewer' | 'customer';
 export type UserStatus = 'active' | 'invited' | 'suspended' | 'deactivated';
 
@@ -50,7 +52,7 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
 export function createUser(input: CreateUserInput): User {
   const now = new Date();
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     email: input.email.toLowerCase(),
     name: input.name,
     role: input.role,

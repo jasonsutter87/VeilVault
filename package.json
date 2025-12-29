@@ -8,11 +8,23 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run --project packages/core",
+    "test:api": "vitest run --project apps/api",
+    "test:security": "vitest run --testNamePattern='security'",
+    "test:smoke": "vitest run --testNamePattern='smoke'",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "clean": "turbo clean && rm -rf node_modules"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@vitest/coverage-v8": "^2.1.8",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   },
   "packageManager": "pnpm@9.15.1",
   "engines": {

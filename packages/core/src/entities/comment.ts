@@ -3,6 +3,8 @@
 // Comments on ledgers, transactions, audits, and other entities
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type CommentTargetType = 'ledger' | 'transaction' | 'audit' | 'verification' | 'task' | 'report';
 
 export interface Comment {
@@ -53,7 +55,7 @@ export function createComment(input: CreateCommentInput): Comment {
   const mentions = extractMentions(input.content);
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     organizationId: input.organizationId,
     targetType: input.targetType,
     targetId: input.targetId,
@@ -123,7 +125,9 @@ function extractMentions(content: string): string[] {
   let match;
 
   while ((match = mentionRegex.exec(content)) !== null) {
-    mentions.push(match[2]); // User ID is in the second capture group
+    if (match[2]) {
+      mentions.push(match[2]); // User ID is in the second capture group
+    }
   }
 
   return [...new Set(mentions)]; // Remove duplicates

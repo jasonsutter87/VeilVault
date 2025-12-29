@@ -3,6 +3,8 @@
 // Core transaction model for VeilVault
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type TransactionType = 'credit' | 'debit' | 'transfer' | 'adjustment';
 export type TransactionStatus = 'pending' | 'confirmed' | 'failed';
 
@@ -39,7 +41,7 @@ export interface CreateTransactionInput {
 export function createTransaction(input: CreateTransactionInput): Transaction {
   const now = new Date();
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ledgerId: input.ledgerId,
     type: input.type,
     status: 'pending',

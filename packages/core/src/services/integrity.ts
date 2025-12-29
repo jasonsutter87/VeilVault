@@ -3,6 +3,7 @@
 // Real-time integrity monitoring and verification
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
 import { VaultLedger, type IntegrityStatus } from '@veilvault/sdk';
 import type { Ledger } from '../entities/ledger.js';
 import type { Verification, VerificationSummary } from '../entities/verification.js';
@@ -71,7 +72,7 @@ export class IntegrityService {
       if (status.status === 'error') {
         overallStatus = 'error';
         newAlerts.push({
-          id: crypto.randomUUID(),
+          id: randomUUID(),
           level: 'critical',
           ledgerId: ledger.id,
           message: status.message ?? 'Integrity check failed',
@@ -81,7 +82,7 @@ export class IntegrityService {
       } else if (status.status === 'warning' && overallStatus !== 'error') {
         overallStatus = 'warning';
         newAlerts.push({
-          id: crypto.randomUUID(),
+          id: randomUUID(),
           level: 'warning',
           ledgerId: ledger.id,
           message: status.message ?? 'Integrity warning detected',
@@ -119,7 +120,7 @@ export class IntegrityService {
     // Check if we need to create an alert
     if (verification.status === 'invalid') {
       this.alerts.push({
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         level: 'critical',
         ledgerId: verification.targetId,
         message: `Verification failed for ${verification.type}: ${verification.targetId}`,

@@ -3,6 +3,8 @@
 // Verification records and results
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type VerificationType = 'transaction' | 'ledger' | 'audit-package' | 'customer';
 export type VerificationStatus = 'valid' | 'invalid' | 'pending' | 'error';
 
@@ -40,7 +42,7 @@ export function createVerification(input: CreateVerificationInput): Verification
   const isValid = input.computedRoot === input.expectedRoot;
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     type: input.type,
     targetId: input.targetId,
     status: isValid ? 'valid' : 'invalid',

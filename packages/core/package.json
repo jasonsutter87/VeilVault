@@ -15,12 +15,18 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "@veilvault/sdk": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "@types/node": "^20.10.6",
+    "@vitest/coverage-v8": "^2.1.8",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
   }
 }

@@ -3,6 +3,8 @@
 // Transaction ledger model for VeilVault
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type LedgerStatus = 'active' | 'archived' | 'suspended';
 
 export interface Ledger {
@@ -30,7 +32,7 @@ export function createLedger(
 ): Ledger {
   const now = new Date();
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     name: input.name,
     description: input.description,
     status: 'active',

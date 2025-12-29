@@ -3,6 +3,8 @@
 // Task management for audit workflows
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type TaskPriority = 'low' | 'medium' | 'high' | 'critical';
 export type TaskStatus = 'pending' | 'in_progress' | 'review' | 'completed' | 'cancelled';
 export type TaskType =
@@ -67,7 +69,7 @@ export interface CreateTaskInput {
 export function createTask(input: CreateTaskInput): Task {
   const now = new Date();
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     organizationId: input.organizationId,
     title: input.title,
     description: input.description,
@@ -117,7 +119,7 @@ export function addChecklistItem(task: Task, text: string): Task {
     checklist: [
       ...task.checklist,
       {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         text,
         completed: false,
       },

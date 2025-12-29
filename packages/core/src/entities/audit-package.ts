@@ -3,6 +3,8 @@
 // Verifiable audit package for external auditors
 // ==========================================================================
 
+import { randomUUID } from '../utils/crypto.js';
+
 export type AuditPackageStatus = 'generating' | 'ready' | 'expired' | 'revoked';
 
 export interface AuditPackage {
@@ -44,7 +46,7 @@ export function createAuditPackage(
     : undefined;
 
   return {
-    id: crypto.randomUUID(),
+    id: randomUUID(),
     ledgerId: input.ledgerId,
     name: input.name,
     description: input.description,
