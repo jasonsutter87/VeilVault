@@ -28,6 +28,7 @@ import { soxRoutes } from './routes/sox.js';
 import { reportRoutes } from './routes/reports.js';
 import { anomalyRoutes } from './routes/anomalies.js';
 import { websocketRoutes } from './routes/websocket.js';
+import { predictionRoutes } from './routes/predictions.js';
 
 const envToLogger: Record<string, object | boolean> = {
   development: {
@@ -87,6 +88,7 @@ export async function buildServer() {
   await server.register(reportRoutes, { prefix: '/api/reports' });
   await server.register(anomalyRoutes, { prefix: '/api/anomalies' });
   await server.register(websocketRoutes, { prefix: '/api/realtime' });
+  await server.register(predictionRoutes, { prefix: '/api/predictions' });
 
   // Error handler
   server.setErrorHandler((error, _request, reply) => {

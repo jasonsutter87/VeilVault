@@ -31,6 +31,7 @@ export * from './services/anomaly.js';
 export * from './services/realtime.js';
 export * from './services/rbac.js';
 export * from './services/audit-trail.js';
+export * from './services/predictions.js';
 
 // Statistics Library (reusable)
 export * as stats from './lib/stats/index.js';
