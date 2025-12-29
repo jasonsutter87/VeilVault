@@ -18,7 +18,7 @@ Based on analysis of [AuditBoard](https://auditboard.com/), [Workiva](https://ww
 | Issue Tracking | ✓ | ✓ | ✓ | - | ✓ |
 | Remediation Workflows | ✓ | ✓ | ✓ | - | ✓ |
 | Audit Evidence Storage | ✓ | ✓ | ✓ | - | PARTIAL |
-| Workpaper Management | ✓ | ✓ | ✓ | - | TODO |
+| Workpaper Management | ✓ | ✓ | ✓ | - | ✓ |
 
 ### 2. SOX & COMPLIANCE
 
@@ -155,7 +155,7 @@ Based on analysis of [AuditBoard](https://auditboard.com/), [Workiva](https://ww
 2. ✓ Predictive Risk Analytics (Forecasting, early warnings, risk clustering)
 3. □ ERP Integrations (SAP, Oracle)
 4. □ SSO/SAML Authentication
-5. □ Workpaper Management
+5. ✓ Workpaper Management (Tickmarks, cross-refs, review workflow, roll-forward)
 6. □ PBC Request Automation
 7. ✓ Remediation Workflows
 
