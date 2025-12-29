@@ -18,6 +18,7 @@ export * from './entities/control.js';
 export * from './entities/issue.js';
 export * from './entities/annotation.js';
 export * from './entities/workpaper.js';
+export * from './entities/pbc-request.js';
 
 // Services
 export * from './services/integrity.js';

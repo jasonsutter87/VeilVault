@@ -14,7 +14,7 @@ Based on analysis of [AuditBoard](https://auditboard.com/), [Workiva](https://ww
 |---------|:----------:|:-------:|:--------:|:-----------:|:---------:|
 | Audit Planning | ✓ | ✓ | ✓ | - | TODO |
 | Audit Workflow Engine | ✓ | ✓ | ✓ | - | TODO |
-| PBC Request Automation | ✓ | ✓ | ✓ | - | TODO |
+| PBC Request Automation | ✓ | ✓ | ✓ | - | ✓ |
 | Issue Tracking | ✓ | ✓ | ✓ | - | ✓ |
 | Remediation Workflows | ✓ | ✓ | ✓ | - | ✓ |
 | Audit Evidence Storage | ✓ | ✓ | ✓ | - | PARTIAL |
@@ -156,7 +156,7 @@ Based on analysis of [AuditBoard](https://auditboard.com/), [Workiva](https://ww
 3. □ ERP Integrations (SAP, Oracle)
 4. □ SSO/SAML Authentication
 5. ✓ Workpaper Management (Tickmarks, cross-refs, review workflow, roll-forward)
-6. □ PBC Request Automation
+6. ✓ PBC Request Automation (Templates, reminders, document tracking, messaging)
 7. ✓ Remediation Workflows
 
 ### Phase 4: Transaction Intelligence (Months 10-12)
